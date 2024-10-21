@@ -1,0 +1,172 @@
+################## PACKAGE TESTS ##################
+
+### Install it
+.libPaths()
+
+# install.packages("devtools")
+devtools::install_github("tiago-simoes/EvoPhylo", lib= "C:/Program Files/R/R-4.1.0/library")
+
+#devtools::install_github("tiago-simoes/EvoPhylo")
+
+devtools::install(lib= "C:/Program Files/R/R-4.1.0/library")
+system.file(package = 'cluster')
+
+
+### Use Development version
+
+#If you have finished writing your code and want to play with it a little bit:
+setwd("D:/Git/EvoPhylo/")
+setwd("D:/Git/BayesTraitsRtools2/")
+devtools::load_all()
+
+11#Test
+data(characters)
+dist_matrix <- get_gower_dist(characters, numeric = FALSE)
+
+
+#Test 2
+library(EvoPhylo)
+library(treeio)
+citation(package = "EvoPhylo")
+
+
+
+################ BUILDING PACKAGE ###############
+
+#makes it easy to save package data in the correct format.
+usethis::use_data()
+
+#Run this to determine the best compression for each file.
+tools::checkRdaFiles()
+
+# Update changes in man/ and DESCRIPTION using roxygen2
+roxygen2::roxygenize(package.dir = "E:/Git/EvoPhylo/", roclets = NULL, load_code = NULL, clean = FALSE)
+roxygen2::roxygenize(package.dir = "E:/Git/BayesTraitsRtools2/", roclets = NULL, load_code = NULL, clean = FALSE)
+
+# Update README.md file from README.Rmd
+devtools::build_readme()
+
+
+###### BUILD WEBSITE
+
+library(utils)
+library(pkgdown)
+
+# Create .yml file (configure your package to use pkgdown)
+usethis::use_pkgdown()
+
+pkgdown::build_site()
+usethis::use_pkgdown_github_pages()
+
+rlang::last_error()
+rlang::last_trace()
+
+
+
+################## CHECK PACKAGE QUALITY ##################
+setwd("E:/Git/EvoPhylo/")
+devtools::load_all()
+
+#Check for package quality
+devtools::check()
+
+
+#OR
+
+### goodpractice
+# Retrieve path
+package_path <- system.file(package = 'EvoPhylo')
+package_path
+
+# Check package
+library(goodpractice)
+GP<- gp("E:/Git/EvoPhylo/")
+results(GP)
+failed_checks(GP)
+failed_positions(GP)
+
+
+########### errors: environment variables
+
+# Change system PATH to 'qpdf under the environment variables
+Sys.which(Sys.getenv("R_QPDF", "qpdf")) #Which qpdf version
+Sys.getenv("PATH") # see all paths for env var
+
+all_path <- Sys.getenv("PATH") # get paths
+Sys.setenv(PATH = paste(all_path, "C:/Program Files/qpdf-10.0.1/bin", sep = ";")) # add new path list of path
+Sys.setenv(PATH = paste(all_path, "C:/rtools42/usr/bin", sep = ";")) # add new path list of path
+#Sys.setenv(PATH = paste(all_path, "C:/Users/tiago/AppData/Roaming/TinyTeX/bin/win32", sep = ";")) # add new path list of path
+
+########## note: "no visible binding for global variable xx"
+#Annoying, but simple to solve.Caused by GGPLOT2
+
+ P2<-ggplot2::ggplot(posterior.final, aes(x=clockrate.log))
+
+# to
+
+  P2<-ggplot2::ggplot(posterior.final, aes(x=posterior.final$clockrate.log))
+
+################## SUBMIT TO CRAN  ##################
+
+#Build package bundle for CRAN
+
+devtools::build(binary = FALSE,
+               vignettes = TRUE,
+               manual = FALSE)
+
+
+
+#Submit to CRAN
+usethis::use_cran_comments()
+
+devtools::submit_cran()
+
+
+################## Check PACKAGE  downloads  ##################
+
+setwd ("E:/Programas/Rpackage(evophylo)/Reports")
+
+library(packageRank)
+library(cranlogs)
+library(ggplot2)
+
+
+summary.packageRank(packages = "Claddis")
+
+cranDownloads(packages = "EvoPhylo", when  = "last-month")
+
+plot(cranDownloads(packages = "Claddis", from = "2019", to = "2020"))
+
+
+down<- cranDownloads(packages = "EvoPhylo", from = "2022-05-12" )
+
+
+down_table <- down$cranlogs.data
+#write.csv(down_table, "down_table.csv")
+
+ggplot(down_table, aes(x = date, y = count))+
+  geom_point()+
+  geom_line()
+
+#Rate downalods/day
+sum(down_table$count)/length(down_table$date)
+
+ggplot(down_table, aes(x = date, y = cumulative))+
+  geom_point()
+
+ggsave("Downloads_2022_May12-Jul12.png")
+
+
+################# OTHERS ###############
+
+#Update LaTex
+library(tinytex)
+tlmgr_search('/times.sty')   # search for times.sty
+tlmgr_install('psnfss')      # install the psnfss package
+tlmgr_update()               # update everything
+
+library(qpdf)
+
+
+
+

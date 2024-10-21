@@ -1,0 +1,15 @@
+importFrom("grid",
+           "unit")
+importFrom("phytools",
+           "nodeHeights")
+importFrom("pbapply",
+           "pboptions", "pbapply")
+importFrom("plotrix",
+           "color.scale")
+importFrom("ape",
+           "nodepath", "Ntip", "getMRCA", "branching.times")
+
+export("createCountsTable", "scalarSearch", "meanBranches", "treeTrans", )
+
+S3method("plotPosts")
+S3method("plotPhylo")
